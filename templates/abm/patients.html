@@ -1,0 +1,68 @@
+{% extends "base2.html" %}
+{% block content %}
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">My Patients</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Patients</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th class="all" width="10">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for object in objects %}
+                        <tr class="odd gradeX">
+                            <td>{{ object.cid }}</td>
+                            <td>{{ object.lastname }}, {{ object.name }}</td>
+                            <td>{{ object.age }}</td>
+
+                            <td>
+                                <div style="display: flex;">
+                                    <form action="/patients/edit/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="object_id" value={{ object.pk }}>
+                                        <button type="submit" formnovalidate name="edit" value="a"
+                                                class="btn btn-default">Edit
+                                        </button>
+                                    </form>
+                                    <form id={{ object.pk }} action="/patients/delete/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="object_id" value={{ object.pk }}>
+                                        <input type="submit" class="btn btn-danger" formnovalidate name="delete"
+                                               value="Delete"/>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% if perms.nurseapp.add_patient %}
+                    <form action="/patients/add/">
+                        <input type="submit" value="Add a new Patient" class="btn btn-primary"/>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                responsive: true,
+                "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
+
+            });
+        });
+    </script>
+{% endblock %}

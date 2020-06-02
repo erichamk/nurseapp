@@ -1,0 +1,33 @@
+{% extends "base2.html" %}
+{% block content %}
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Delete Record</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form action="." method="post">
+                {% csrf_token %}
+                {{ cform.management_form }}
+                <input type="hidden" name="object_id" value={{ object_id }}>
+                <table>
+                    <tbody>{% for field in form %}
+                        <tr>
+                            <div class="form-group">
+                                {{ field.errors }}
+                                <td>{{ field.label_tag }}</td>
+                                <td>{{ field }}</td>
+                                {% if field.help_text %}
+                                    <p class="help">{{ field.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <input type="submit" formnovalidate name="delete_confirm" value="Delete" class="btn btn-danger"/>
+                <input type="submit" formnovalidate name="cancel" value="Cancel" class="btn btn-light"/>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,179 @@
+{% extends "base2.html" %}
+{% block content %}
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Ranges</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Systolic Pressure Ranges</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Pressure Range</th>
+                        <th>Scale Level</th>
+                        <th>Status</th>
+                        <th class="all" width="10">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for object in objects %}
+                        <tr class="odd gradeX">
+                            <td>{{ object.pressure1_min }} to {{ object.pressure1_max }}</td>
+                            <td>{{ object.level }}</td>
+                            <td>{{ object.status }}</td>
+                            <td>
+                                <div style="display: flex;">
+                                    <form action="/ranges/edit/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="object_id" value={{ object.pk }}>
+                                        <button type="submit" formnovalidate name="edit" value="p1" class="btn btn-default">Edit
+                                        </button>
+                                    </form>
+                                    <form id={{ object.pk }} action="/ranges/delete/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="object_id" value={{ object.pk }}>
+                                        <button type="submit" formnovalidate name="delete" value="p1" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <!-- /.table-responsive -->
+                {% if perms.nurseapp.add_range %}
+                    <form action="/ranges/add/">
+                        <button type="submit" name="add" value="p1" class="btn btn-primary">Add a new Range</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Diastolic Pressure Ranges</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Pressure Range</th>
+                        <th>Scale Level</th>
+                        <th>Status</th>
+                        <th class="all" width="10">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for object in objects2 %}
+                        <tr class="odd gradeX">
+                            <td>{{ object.pressure2_min }} to {{ object.pressure2_max }}</td>
+                            <td>{{ object.level }}</td>
+                            <td>{{ object.status }}</td>
+
+                            <td>
+                                <div style="display: flex;">
+                                    <form action="/ranges/edit/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="object_id" value={{ object.pk }}>
+                                        <button type="submit" formnovalidate name="edit" value="p2" class="btn btn-default">Edit</button>
+                                    </form>
+                                    <form id={{ object.pk }} action="/ranges/delete/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="object_id" value={{ object.pk }}>
+                                        <button type="submit" formnovalidate name="delete" value="p2" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <!-- /.table-responsive -->
+                {% if perms.nurseapp.add_range %}
+                    <form action="/ranges/add/">
+                        <button type="submit" name="add" value="p2" class="btn btn-primary">Add a new Range</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">BPM Ranges</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable3" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>BPM Range</th>
+                        <th>Status</th>
+                        <th class="all" width="10">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for object in objects3 %}
+                        <tr class="odd gradeX">
+                            <td>{{ object.age }}</td>
+                            <td>{{ object.gender }} </td>
+                            <td>{{ object.bpm_min }} - {{ object.bpm_max }}</td>
+                            <td>{{ object.status }}</td>
+                            <td>
+                                <div style="display: flex;">
+                                    <form action="/ranges/edit/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="object_id" value={{ object.pk }}>
+                                        <button type="submit" formnovalidate name="edit" value="b" class="btn btn-default">Edit</button>
+                                    </form>
+                                    <form id={{ object.pk }} action="/ranges/delete/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="object_id" value={{ object.pk }}>
+                                        <button type="submit" formnovalidate name="delete" value="b" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <!-- /.table-responsive -->
+                {% if perms.nurseapp.add_range %}
+                    <form action="/ranges/add/">
+                        <button type="submit" name="add" value="b" class="btn btn-primary">Add a new Range</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                responsive: true,
+                "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
+
+            });
+        });
+        $(document).ready(function () {
+            $('#dataTable2').DataTable({
+                responsive: true,
+                "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
+
+            });
+        });
+        $(document).ready(function () {
+            $('#dataTable3').DataTable({
+                responsive: true,
+                "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
+
+            });
+        });
+    </script>
+{% endblock %}
