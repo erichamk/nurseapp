@@ -1,6 +1,6 @@
 #git clone https://github.com/erichamk/nurseapp
-sudo apt-get -y install python3-venv python-pip
-cd nurseapp
+#cd nurseapp
+#sudo apt-get -y install python3-venv python3-pip
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
