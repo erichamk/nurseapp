@@ -17,7 +17,6 @@ def adm_patient(request):
     else:
         objects = Patient.objects.filter(nurse_id=request.user.id)
 
-
     today = datetime.date.today()
 
     for o in objects:
@@ -68,7 +67,8 @@ def adm_patient_mod(request):
                 p = Patient.objects.get(pk=request.POST['object_id'])
                 form = PatientForm(instance=p)
                 object_id = request.POST.get("object_id")
-                return render(request, "abm/patients/edit.html", {'object_id': object_id, 'form': form, 'mensaje': mensaje})
+                return render(request, "abm/patients/edit.html",
+                              {'object_id': object_id, 'form': form, 'mensaje': mensaje})
             else:
                 return redirect("/patients/")
 
@@ -90,7 +90,6 @@ def adm_patient_mod(request):
 
     else:
         return redirect("/patients/")
-
 
 
 @login_required

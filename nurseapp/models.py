@@ -28,7 +28,7 @@ class Patient(models.Model):
 
 class Record(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    #date = models.DateField(default=datetime.date.today)
+    # date = models.DateField(default=datetime.date.today)
     date = models.DateTimeField(default=datetime.datetime.now)
     pressure1 = models.IntegerField()
     pressure2 = models.IntegerField()
@@ -48,11 +48,13 @@ class RangeP1(models.Model):
     level = models.IntegerField(unique=True)
     status = models.CharField(max_length=25)
 
+
 class RangeP2(models.Model):
     pressure2_min = models.IntegerField()
     pressure2_max = models.IntegerField()
     level = models.IntegerField(unique=True)
     status = models.CharField(max_length=25)
+
 
 class RangeB(models.Model):
     age = models.IntegerField()
@@ -64,6 +66,7 @@ class RangeB(models.Model):
     bpm_min = models.IntegerField()
     bpm_max = models.IntegerField()
     status = models.CharField(max_length=25)
+
 
 class Range(models.Model):
     age = models.IntegerField()

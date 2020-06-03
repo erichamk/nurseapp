@@ -36,14 +36,15 @@ class RecordForm(forms.ModelForm):
             'bpm': 'BPM',
         }
         widgets = {
-            #'date': forms.DateTimeInput(),
-            #'datet': forms.SelectDateWidget(years=range(1900, 2021)),
+            # 'date': forms.DateTimeInput(),
+            # 'datet': forms.SelectDateWidget(years=range(1900, 2021)),
 
         }
 
         def clean_status_pressure(self):
-             data = self.cleaned_data['password']
-             return data
+            data = self.cleaned_data['password']
+            return data
+
 
 class RangeForm(forms.ModelForm):
     class Meta:
@@ -57,6 +58,8 @@ class RangeForm(forms.ModelForm):
             'bpm_min': 'Min. BPM',
             'bpm_max': 'Max. BPM',
         }
+
+
 class RangeP1Form(forms.ModelForm):
     class Meta:
         model = RangeP1
@@ -66,6 +69,8 @@ class RangeP1Form(forms.ModelForm):
             'pressure1_max': 'Max. Systolic Blood Pressure',
             'level': 'Scale level',
         }
+
+
 class RangeP2Form(forms.ModelForm):
     class Meta:
         model = RangeP2
@@ -75,6 +80,8 @@ class RangeP2Form(forms.ModelForm):
             'pressure2_max': 'Max. Diastolic Pressure',
             'level': 'Scale level',
         }
+
+
 class RangeBForm(forms.ModelForm):
     class Meta:
         model = RangeB

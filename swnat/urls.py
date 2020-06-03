@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^home2/$', views.home2, name='home'),
     url(r'^patient_historics/$', views.patient_historics, name='patient_historics'),
 
-    #url(r'^publico/$', views.panel_publico, name='panel_publico'),
+    # url(r'^publico/$', views.panel_publico, name='panel_publico'),
 
     url(r'^patients/$', views.adm_patient, name='patient_list'),
     url(r'^patients/add/$', views.adm_patient_add, name='patient_add'),
