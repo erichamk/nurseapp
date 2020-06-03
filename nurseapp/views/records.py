@@ -5,18 +5,10 @@ import datetime
 from django.contrib import messages
 
 
-# PLANTILLAS
-@login_required
-@permission_required('nurseapp.view_record', raise_exception=True)
-def adm_record(request):
-    """
-    Vista que procesa la solicitud de visualizar y eliminar records
-    """
-    objects = Record.objects.all()
-
+def record_eval_function(records):
     today = datetime.date.today()
 
-    for o in objects:
+    for o in records:
         o.patient.age = today.year - o.patient.birth.year - (
                 (today.month, today.day) < (o.patient.birth.month, o.patient.birth.day))
 
@@ -38,6 +30,27 @@ def adm_record(request):
             o.status_bpm = range3.status
         else:
             o.status_bpm = 'N/A'
+    return records
+
+
+# PLANTILLAS
+@login_required
+@permission_required('nurseapp.view_record', raise_exception=True)
+def adm_record(request):
+    """
+    Vista que procesa la solicitud de visualizar y eliminar records
+    """
+    # if request.GET.get("patient_id"):
+    #     objects = record_eval_function(Record.objects.filter(patient=request.GET.get("patient_id")))
+    #     patient = Patient.objects.get(pk=request.GET.get("patient_id"))
+    #     return render(request, "abm/records.html",
+    #                   {'objects': objects, 'patient_id': patient.id, 'patient_name': patient.name})
+    #
+    # else:
+    if request.user.is_superuser:
+        objects = record_eval_function(Record.objects.all())
+    else:
+        objects = record_eval_function(Record.objects.filter(patient__nurse_id=request.user.id))
 
     return render(request, "abm/records.html", {'objects': objects})
 
@@ -50,13 +63,14 @@ def adm_record_add(request):
     """
     mensaje = ''
     if request.method == 'POST':
-        if request.POST.get("save"):
+        if request.POST.get("cancel"):
+            return redirect("/records/")
+        elif request.POST.get("save"):
             form = RecordForm(request.POST)
             if form.is_valid():
                 instance = form.save(commit=False)
-
                 instance.save()
-                mensaje = 'Record \"' + instance.__str__() + '\" created successfully!'
+                mensaje = 'Record created'
                 messages.add_message(request, messages.INFO, mensaje)
                 # Log.objects.create(fecha=datetime.datetime.now(), usuario=request.user, accion="Crea record \'"+instance.__str__()+"\'")
 
@@ -65,8 +79,11 @@ def adm_record_add(request):
             else:
                 print(form.errors)
                 print('invalid')
+
         else:
             return redirect("/records/")
+    elif request.GET.get("patient_id"):
+        form = RecordForm(initial={'patient': request.GET.get("patient_id")})
     else:
         form = RecordForm()
 
@@ -98,7 +115,7 @@ def adm_record_mod(request):
             if form.is_valid():
                 instance = form.save()
                 # Log.objects.create(fecha=datetime.datetime.now(), usuario=request.user, accion="Modifica record \'" + instance.__str__() + "\'")
-                mensaje = 'Record modified successfully!'
+                mensaje = 'Record saved'
                 messages.add_message(request, messages.INFO, mensaje)
                 return redirect("/records/")
             else:
@@ -132,7 +149,7 @@ def adm_record_del(request):
             if request.POST.get('delete_confirm'):
                 instance = Record.objects.get(pk=request.POST['object_id'])
                 instance.delete()
-                mensaje = 'Record deleted successfully!'
+                mensaje = 'Record deleted'
                 messages.add_message(request, messages.INFO, mensaje)
 
     return redirect("/records/")

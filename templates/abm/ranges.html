@@ -12,8 +12,8 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                     <tr>
-                        <th>Pressure Range</th>
                         <th>Scale Level</th>
+                        <th>Pressure Range</th>
                         <th>Status</th>
                         <th class="all" width="10">Actions</th>
                     </tr>
@@ -21,21 +21,24 @@
                     <tbody>
                     {% for object in objects %}
                         <tr class="odd gradeX">
-                            <td>{{ object.pressure1_min }} to {{ object.pressure1_max }}</td>
                             <td>{{ object.level }}</td>
+                            <td>{{ object.pressure1_min }} to {{ object.pressure1_max }}</td>
                             <td>{{ object.status }}</td>
                             <td>
                                 <div style="display: flex;">
                                     <form action="/ranges/edit/" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="object_id" value={{ object.pk }}>
-                                        <button type="submit" formnovalidate name="edit" value="p1" class="btn btn-default">Edit
+                                        <button type="submit" formnovalidate name="edit" value="p1"
+                                                class="btn btn-default">Edit
                                         </button>
                                     </form>
                                     <form id={{ object.pk }} action="/ranges/delete/" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="object_id" value={{ object.pk }}>
-                                        <button type="submit" formnovalidate name="delete" value="p1" class="btn btn-danger">Delete</button>
+                                        <button type="submit" formnovalidate name="delete" value="p1"
+                                                class="btn btn-danger">Delete
+                                        </button>
                                     </form>
                                 </div>
                             </td>
@@ -61,8 +64,8 @@
                 <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
                     <thead>
                     <tr>
-                        <th>Pressure Range</th>
                         <th>Scale Level</th>
+                        <th>Pressure Range</th>
                         <th>Status</th>
                         <th class="all" width="10">Actions</th>
                     </tr>
@@ -70,8 +73,8 @@
                     <tbody>
                     {% for object in objects2 %}
                         <tr class="odd gradeX">
-                            <td>{{ object.pressure2_min }} to {{ object.pressure2_max }}</td>
                             <td>{{ object.level }}</td>
+                            <td>{{ object.pressure2_min }} to {{ object.pressure2_max }}</td>
                             <td>{{ object.status }}</td>
 
                             <td>
@@ -79,12 +82,16 @@
                                     <form action="/ranges/edit/" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="object_id" value={{ object.pk }}>
-                                        <button type="submit" formnovalidate name="edit" value="p2" class="btn btn-default">Edit</button>
+                                        <button type="submit" formnovalidate name="edit" value="p2"
+                                                class="btn btn-default">Edit
+                                        </button>
                                     </form>
                                     <form id={{ object.pk }} action="/ranges/delete/" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="object_id" value={{ object.pk }}>
-                                        <button type="submit" formnovalidate name="delete" value="p2" class="btn btn-danger">Delete</button>
+                                        <button type="submit" formnovalidate name="delete" value="p2"
+                                                class="btn btn-danger">Delete
+                                        </button>
                                     </form>
                                 </div>
                             </td>
@@ -129,12 +136,16 @@
                                     <form action="/ranges/edit/" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="object_id" value={{ object.pk }}>
-                                        <button type="submit" formnovalidate name="edit" value="b" class="btn btn-default">Edit</button>
+                                        <button type="submit" formnovalidate name="edit" value="b"
+                                                class="btn btn-default">Edit
+                                        </button>
                                     </form>
                                     <form id={{ object.pk }} action="/ranges/delete/" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="object_id" value={{ object.pk }}>
-                                        <button type="submit" formnovalidate name="delete" value="b" class="btn btn-danger">Delete</button>
+                                        <button type="submit" formnovalidate name="delete" value="b"
+                                                class="btn btn-danger">Delete
+                                        </button>
                                     </form>
                                 </div>
                             </td>
@@ -158,21 +169,27 @@
             $('#dataTable').DataTable({
                 responsive: true,
                 "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
-
+                "columnDefs": [
+                    {"orderable": false, "targets": 3},
+                ]
             });
         });
         $(document).ready(function () {
             $('#dataTable2').DataTable({
                 responsive: true,
                 "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
-
+                "columnDefs": [
+                    {"orderable": false, "targets": 3},
+                ]
             });
         });
         $(document).ready(function () {
             $('#dataTable3').DataTable({
                 responsive: true,
                 "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
-
+                "columnDefs": [
+                    {"orderable": false, "targets": 4},
+                ]
             });
         });
     </script>

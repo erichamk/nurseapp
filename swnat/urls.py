@@ -25,6 +25,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^403/', views.error403),
+    url(r'^$', auth_views.LoginView.as_view(), name='login'),
 
     # user auth
     # url(r'^login/$', auth_views.login, {'template_name': 'registration/login.html'}),

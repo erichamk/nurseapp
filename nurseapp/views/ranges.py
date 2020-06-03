@@ -39,7 +39,7 @@ def adm_range_add(request):
 
             if form.is_valid():
                 instance = form.save()
-                message = 'Range created successfully!'
+                message = 'Range created'
                 messages.add_message(request, messages.INFO, message)
                 # Log.objects.create(fecha=datetime.datetime.now(), usuario=request.user, accion="Crea range \'"+instance.__str__()+"\'")
                 return redirect("/ranges/")
@@ -111,7 +111,7 @@ def adm_range_mod(request):
             if form.is_valid():
                 instance = form.save()
                 # Log.objects.create(fecha=datetime.datetime.now(), usuario=request.user, accion="Modifica range \'" + instance.__str__() + "\'")
-                message = 'Range modified successfully!'
+                message = 'Range saved'
                 messages.add_message(request, messages.INFO, message)
                 return redirect("/ranges/")
             else:
@@ -157,7 +157,7 @@ def adm_range_del(request):
             if request.POST.get("type") == "b":
                 instance = RangeB.objects.get(pk=request.POST['object_id'])
             instance.delete()
-            message = 'Range deleted successfully'
+            message = 'Range deleted'
             messages.add_message(request, messages.INFO, message)
 
     return redirect("/ranges/")

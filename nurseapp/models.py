@@ -10,7 +10,7 @@ import datetime
 
 
 class Patient(models.Model):
-    # user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nurse = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     lastname = models.CharField(max_length=30)
     genders = (
@@ -28,7 +28,8 @@ class Patient(models.Model):
 
 class Record(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    date = models.DateField(default=datetime.date.today)
+    #date = models.DateField(default=datetime.date.today)
+    date = models.DateTimeField(default=datetime.datetime.now)
     pressure1 = models.IntegerField()
     pressure2 = models.IntegerField()
     bpm = models.IntegerField()

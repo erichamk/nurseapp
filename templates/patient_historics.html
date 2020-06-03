@@ -1,79 +1,95 @@
 {% extends 'base2.html' %}
 {% block content %}
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Patient Historics</h1>
+    <h1 class="h3 mb-2 text-gray-800">
+            {% if request.user.is_authenticated %}
+
+        Search Patient History
+{% else %}
+        Lookup History
+    {% endif %}
+    </h1>
+
+
+    <!-- Dropdown - Messages -->
 
     <div class="search-container" style="padding-top: 0px;padding-bottom: 20px">
-        <form action="/patient_historics" class="form-inline ml-auto">
-
-            <input type="text" placeholder="Patient ID.." name="search" value="{{ search }}" class="form-control w-10">
-            <div style="padding-left: 2px; padding-right: 5px">
-                <button type="submit" class="btn btn-dark">Search ID</button>
-            </div>
-        </form>
+            <form action="/patient_historics" class="form-inline ml-auto">
+                <input type="text" placeholder="Password.. (Patient ID)" name="search" value="{{ search }}"
+                       class="form-control w-10">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </form>
     </div>
 
-    {% if message %}
-        <br>&emsp; {{ message }} </br>
-    {% endif %}
-    {% if objects %}
+        {% if message %}
+            <br>&emsp; {{ message }} </br>
+        {% endif %}
+        {% if objects %}
 
 
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">{{ name }}</h6>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Records for: {{ name }}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
 
-                        <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Blood pressure</th>
-                            <th>BPM</th>
-                            <th>Vitals</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for object in objects %}
-                            <tr class="odd gradeX">
-                                <td>{{ object.date }}</td>
-                                <td>{{ object.pressure1 }} - {{ object.pressure2 }}
-                                    ({{ object.status_pressure }})
-                                </td>
-                                <td>{{ object.bpm }} ({{ object.status_bpm }})</td>
-                                <td>
-                                    {% if object.status_pressure == "Normal" and object.status_bpm == "Normal" %}
-                                        <a class="btn btn-success btn-circle"><i class="fas fa-check"></i></a>
-                                    {% else %}
-                                        <a class="btn btn-danger btn-circle"><i class="fas fa-exclamation-triangle"></i></a>
-                                    {% endif %}
-                                </td>
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Blood pressure</th>
+                                <th>Heartrate</th>
+                                <th width="10">Vitals</th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {% for object in objects %}
+                                <tr class="odd gradeX">
+                                    <td>{{ object.date }}</td>
+                                    <td>{{ object.pressure1 }} - {{ object.pressure2 }} mmHg
+                                        ({{ object.status_pressure }})
+                                    </td>
+                                    <td>{{ object.bpm }} BPM ({{ object.status_bpm }})</td>
+                                    <td>
+                                        {% if object.status_pressure == "Normal" and object.status_bpm == "Normal" %}
+                                            <a class="btn btn-success btn-circle"><i class="fas fa-check"></i></a>
+                                        {% else %}
+                                            <a class="btn btn-danger btn-circle"><i
+                                                    class="fas fa-exclamation-triangle"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Vitals Chart</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
-                    <canvas id="myAreaChart"></canvas>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Vitals over time</h6>
                 </div>
-                <div class="chart-area">
-                    <canvas id="myAreaChart2"></canvas>
+                <div class="card-body">
+                    Blood Pressure
+                    <div class="chart-area">
+                        <canvas id="myAreaChart"></canvas>
+                    </div>
+                    <p></p>
+                    Heart Rate
+                    <div class="chart-area">
+                        <canvas id="myAreaChart2"></canvas>
+                    </div>
+                    <hr>
                 </div>
-                <hr>
             </div>
-        </div>
 
-    {% endif %}
+        {% endif %}
 
     </div>
 {% endblock %}
@@ -83,27 +99,52 @@
             $('#dataTable').DataTable({
                 responsive: true,
                 "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
-
+                "order": [[ 0, "desc" ]],
             });
         });
     </script>
 
     <script src="/static/vendor/chart.js/Chart.min.js"></script>
     <script>
-        var ctx = document.getElementById("myAreaChart2");
-        var myLineChart = new Chart(ctx, {
+        function number_format(number, decimals, dec_point, thousands_sep) {
+            // *     example: number_format(1234.56, 2, ',', ' ');
+            // *     return: '1 234,56'
+            number = (number + '').replace(',', '').replace(' ', '');
+            var n = !isFinite(+number) ? 0 : +number,
+                prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+                dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+                s = '',
+                toFixedFix = function (n, prec) {
+                    var k = Math.pow(10, prec);
+                    return '' + Math.round(n * k) / k;
+                };
+            // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+            s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+            if (s[0].length > 3) {
+                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+            }
+            if ((s[1] || '').length < prec) {
+                s[1] = s[1] || '';
+                s[1] += new Array(prec - s[1].length + 1).join('0');
+            }
+            return s.join(dec);
+        }
+
+        var ctx2 = document.getElementById("myAreaChart2");
+        var myLineChart2 = new Chart(ctx2, {
             type: 'line',
             data: {
                 labels: [{% for o in objects %} "{{ o.date }}", {% endfor %}],
                 datasets: [
                     {
-                        label: "BPM",
+                        label: "Heart Rate (BPM)",
                         lineTension: 0.3,
                         backgroundColor: "rgba(78, 115, 223, 0.05)",
-                        borderColor: "rgba(78, 115, 223, 1)",
+                        borderColor: "rgba(220, 0, 0, 1)",
                         pointRadius: 3,
-                        pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                        pointBorderColor: "rgba(78, 115, 223, 1)",
+                        pointBackgroundColor: "rgba(220, 0, 0, 1)",
+                        pointBorderColor: "rgba(220, 0, 0, 1)",
                         pointHoverRadius: 3,
                         pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
                         pointHoverBorderColor: "rgba(78, 115, 223, 1)",
@@ -139,8 +180,8 @@
                         ticks: {
                             maxTicksLimit: 5,
                             padding: 10,
-                            // Include a dollar sign in the ticks
-
+                            suggestedMin: 0,
+                            suggestedMax: 200
                         },
                         gridLines: {
                             color: "rgb(234, 236, 244)",
@@ -152,7 +193,7 @@
                     }],
                 },
                 legend: {
-                    display: false
+                    display: true
                 },
                 tooltips: {
                     backgroundColor: "rgb(255,255,255)",
@@ -171,7 +212,7 @@
                     callbacks: {
                         label: function (tooltipItem, chart) {
                             var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                            return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                            return datasetLabel + ': ' + number_format(tooltipItem.yLabel) + ' BPM';
                         }
                     }
                 }
@@ -184,21 +225,21 @@
             data: {
                 labels: [{% for o in objects %} "{{ o.date }}", {% endfor %}],
                 datasets: [{
-                    label: "Systolic Blood Pressure",
+                    label: "Systolic Blood Pressure (mmHg)",
                     lineTension: 0.3,
-                    backgroundColor: "rgba(78, 115, 223, 0.05)",
-                    borderColor: "rgba(78, 115, 223, 1)",
+                    backgroundColor: "rgba(0, 115, 0, 0.05)",
+                    borderColor: "rgba(0, 115, 0, 1)",
                     pointRadius: 3,
-                    pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                    pointBorderColor: "rgba(78, 115, 223, 1)",
+                    pointBackgroundColor: "rgba(0, 115, 0, 1)",
+                    pointBorderColor: "rgba(0, 115, 0, 1)",
                     pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHoverBackgroundColor: "rgba(0, 115, 0, 1)",
+                    pointHoverBorderColor: "rgba(0, 115, 0, 1)",
                     pointHitRadius: 10,
                     pointBorderWidth: 2,
                     data: [{% for o in objects %} {{ o.pressure1 }}, {% endfor %}],
-                },{
-                    label: "Diastolic Blood Pressure",
+                }, {
+                    label: "Diastolic Blood Pressure (mmHg)",
                     lineTension: 0.3,
                     backgroundColor: "rgba(78, 115, 223, 0.05)",
                     borderColor: "rgba(78, 115, 223, 1)",
@@ -240,7 +281,8 @@
                         ticks: {
                             maxTicksLimit: 5,
                             padding: 10,
-
+                            suggestedMin: 0,
+                            suggestedMax: 200
                         },
                         gridLines: {
                             color: "rgb(234, 236, 244)",
@@ -252,7 +294,7 @@
                     }],
                 },
                 legend: {
-                    display: false
+                    display: true
                 },
                 tooltips: {
                     backgroundColor: "rgb(255,255,255)",
@@ -271,7 +313,7 @@
                     callbacks: {
                         label: function (tooltipItem, chart) {
                             var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                            return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                            return datasetLabel + ': ' + number_format(tooltipItem.yLabel) + ' mmHg';
                         }
                     }
                 }

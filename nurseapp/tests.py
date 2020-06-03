@@ -24,6 +24,7 @@ class AddPatient(TestCase):
 
     def test(self):
         data = {
+            'nurse_id': 1,
             'name': 'test',
             'lastname': 'test',
             'cid': 1,

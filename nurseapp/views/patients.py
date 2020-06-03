@@ -12,7 +12,11 @@ def adm_patient(request):
     """
     Vista que procesa la solicitud de visualizar y eliminar patients
     """
-    objects = Patient.objects.all()
+    if request.user.is_superuser:
+        objects = Patient.objects.all()
+    else:
+        objects = Patient.objects.filter(nurse_id=request.user.id)
+
 
     today = datetime.date.today()
 
@@ -33,8 +37,10 @@ def adm_patient_add(request):
         if request.POST.get("save"):
             form = PatientForm(request.POST)
             if form.is_valid():
-                instance = form.save()
-                mensaje = 'Patient \"' + instance.__str__() + '\" created successfully!'
+                instance = form.save(commit=False)
+                instance.nurse = User.objects.get(pk=request.user.id)
+                instance.save()
+                mensaje = 'Patient \"' + instance.__str__() + '\" created'
                 messages.add_message(request, messages.INFO, mensaje)
                 # Log.objects.create(fecha=datetime.datetime.now(), usuario=request.user, accion="Crea patient \'"+instance.__str__()+"\'")
                 return redirect("/patients/")
@@ -44,7 +50,7 @@ def adm_patient_add(request):
         else:
             return redirect("/patients/")
     else:
-        form = PatientForm()
+        form = PatientForm(initial={'birth': '2000-01-01'})
 
     return render(request, "abm/patients/add.html", {'form': form, 'mensaje': mensaje})
 
@@ -73,7 +79,7 @@ def adm_patient_mod(request):
             if form.is_valid():
                 instance = form.save()
                 # Log.objects.create(fecha=datetime.datetime.now(), usuario=request.user, accion="Modifica patient \'" + instance.__str__() + "\'")
-                mensaje = 'Patient modified successfully!'
+                mensaje = 'Patient saved'
                 messages.add_message(request, messages.INFO, mensaje)
                 return redirect("/patients/")
             else:
@@ -108,7 +114,7 @@ def adm_patient_del(request):
             if request.POST.get('delete_confirm'):
                 instance = Patient.objects.get(pk=request.POST['object_id'])
                 instance.delete()
-                mensaje = 'Patient deleted successfully!'
+                mensaje = 'Patient deleted'
                 messages.add_message(request, messages.INFO, mensaje)
 
     return redirect("/patients/")

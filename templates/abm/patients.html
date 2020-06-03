@@ -14,8 +14,10 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th>Birthdate</th>
                         <th>Age</th>
-                        <th class="all" width="10">Actions</th>
+                        <th>Gender</th>
+                        <th class="all" width="35">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -23,10 +25,22 @@
                         <tr class="odd gradeX">
                             <td>{{ object.cid }}</td>
                             <td>{{ object.lastname }}, {{ object.name }}</td>
+                            <td>{{ object.birth }}</td>
                             <td>{{ object.age }}</td>
+                            <td>{% if object.gender == "m" %}
+                                Male
+                            {% else %}
+                                Female
+                            {% endif %}</td>
 
                             <td>
                                 <div style="display: flex;">
+                                    <form action="/records/add">
+                                        <input type="hidden" name="patient_id" value={{ object.pk }}>
+                                        <button type="submit" formnovalidate
+                                                class="btn btn-default">Record Vitals
+                                        </button>
+                                    </form>
                                     <form action="/patients/edit/" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="object_id" value={{ object.pk }}>
@@ -61,8 +75,9 @@
             $('#dataTable').DataTable({
                 responsive: true,
                 "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
-
+                "columnDefs": [{"orderable": false, "targets": 5}]
             });
         });
     </script>
+
 {% endblock %}

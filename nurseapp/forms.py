@@ -11,7 +11,7 @@ class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
         fields = '__all__'
-        exclude = ['age']
+        exclude = ['nurse', 'age']
         labels = {
             'name': 'Name',
             'lastname': 'Last-name',
@@ -20,7 +20,7 @@ class PatientForm(forms.ModelForm):
             'birth': 'Date of birth'
         }
         widgets = {
-            'birth': forms.SelectDateWidget(years=range(1900, 2020)),
+            'birth': forms.SelectDateWidget(years=range(1900, 2021)),
         }
 
 
@@ -28,7 +28,7 @@ class RecordForm(forms.ModelForm):
     class Meta:
         model = Record
         fields = '__all__'
-        exclude = ['status_bpm', 'status_pressure', 'vitals']
+        exclude = ['date', 'status_bpm', 'status_pressure', 'vitals']
         labels = {
             'patient': 'Patient',
             'pressure1': 'Systolic Blood Pressure',
@@ -36,7 +36,8 @@ class RecordForm(forms.ModelForm):
             'bpm': 'BPM',
         }
         widgets = {
-            'date': forms.SelectDateWidget(years=range(1900, 2021)),
+            #'date': forms.DateTimeInput(),
+            #'datet': forms.SelectDateWidget(years=range(1900, 2021)),
 
         }
 

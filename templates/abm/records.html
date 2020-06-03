@@ -5,7 +5,7 @@
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Records</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Records {% if patient_name %} for {{ patient_name }}{% endif %}</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -18,7 +18,7 @@
                         <th>Patient Name</th>
                         <th>Patient Age</th>
                         <th>Blood pressure</th>
-                        <th>BPM</th>
+                        <th>Heartrate</th>
                         <th>Vitals</th>
                         <th class="all" width="10">Actions</th>
                     </tr>
@@ -26,12 +26,12 @@
                     <tbody>
                     {% for object in objects %}
                         <tr class="odd gradeX">
-                            <td>{{ object.date }}</td>
+                            <td>{{ object.date|date:"M d, Y H:i" }}</td>
                             <td>{{ object.patient.cid }}</td>
                             <td>{{ object.patient.name }} {{ object.patient.lastname }}</td>
                             <td>{{ object.patient.age }}</td>
-                            <td>{{ object.pressure1 }} - {{ object.pressure2 }} ({{ object.status_pressure }})</td>
-                            <td>{{ object.bpm }} ({{ object.status_bpm }})</td>
+                            <td>{{ object.pressure1 }} - {{ object.pressure2 }} mmHg ({{ object.status_pressure }})</td>
+                            <td>{{ object.bpm }} BPM ({{ object.status_bpm }})</td>
                             <td>
                                 {% if object.status_pressure == "Normal" and object.status_bpm == "Normal" %}
                                     <a class="btn btn-success btn-circle"><i class="fas fa-check"></i></a>
@@ -60,23 +60,31 @@
                     {% endfor %}
                     </tbody>
                 </table>
-                {% if perms.nurseapp.add_patient %}
+                {% if perms.nurseapp.add_record %}
                     <form action="/records/add/">
+                        <input type="hidden" name="patient_id" value="{{ patient_id }}">
                         <input type="submit" value="Add a new Record" class="btn btn-primary"/>
                     </form>
                 {% endif %}
             </div>
         </div>
     </div>
-    </div>
 {% endblock %}
 {% block scripts %}
+{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>#}
+{#    <script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>#}
+
     <script>
         $(document).ready(function () {
+            //$.fn.dataTable.moment( 'MM/DD/YYYY h:mm:ss' );
             $('#dataTable').DataTable({
                 responsive: true,
                 "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
-
+                "order": [[0, "desc"]],
+                "columnDefs": [
+                    { "orderable": false, "targets": 6 },
+                    { "orderable": false, "targets": 7 },
+                ]
             });
         });
     </script>
